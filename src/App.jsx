@@ -1,9 +1,15 @@
+import React from "react";
+import Navbar from "./components/Navbar"
+import Manager from "./components/Manager";
+
 function App() {
   return (
-   <>
- <h1 className="bg-amber-300">hello</h1>
+    <>
+   <Navbar/>
+   <Manager/>
+ </>
 
-   </>
+   
   );
 }
 
