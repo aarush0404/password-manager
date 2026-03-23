@@ -1,12 +1,12 @@
 import React from "react";
 import Navbar from "./components/Navbar"
-import Manager from "./components/Manager";
+import Manages from "./components/Manages";
 
 function App() {
   return (
     <>
    <Navbar/>
-   <Manager/>
+   <Manages/>
  </>
 
    
