@@ -1,7 +1,17 @@
-import React, { useState,useRef } from 'react'
+import React, { useState,useRef,useEffect } from 'react'
 
 const Manages = () => {
 const ref = useRef()
+const [passwordsArray, setpasswordsArray] = useState([])
+useEffect(() => {
+let passwords=localStorage.getItem("passwords")
+  
+  if(passwords){
+    setpasswordsArray(JSON.parse(passwords))
+  
+  }
+}, [])
+
   const [form, setForm] = useState({
     site: "",
     username: "",
@@ -15,6 +25,13 @@ const ref = useRef()
 const showpassword=()=>{
  setshow(!show);
 }
+const savepassword=()=>{
+  
+  setpasswordsArray([...passwordsArray,form])
+  localStorage.setItem("passwords",JSON.stringify([...passwordsArray,form]))
+  console.log([...passwordsArray,form])
+
+}
   return (
     <div className="min-h-screen w-full relative">
 
@@ -27,7 +44,7 @@ const showpassword=()=>{
       />
 
       {/* Content */}
-      <div className="relative z-10 flex justify-center items-center pb-40 min-h-screen">
+      <div className="<div className= p-5 relative top-30">
 
         <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-lg w-96">
 
@@ -71,7 +88,7 @@ const showpassword=()=>{
            onClick={showpassword}/>
         </div>
           {/* Button */}
-          <button className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+          <button   onClick={savepassword}  className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
             Save Password
           </button>
 
@@ -82,4 +99,4 @@ const showpassword=()=>{
   )
 }
 
-export default Manages
+export default Manages;
