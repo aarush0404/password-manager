@@ -44,7 +44,7 @@ const savepassword=()=>{
       />
 
       {/* Content */}
-      <div className="<div className= p-5 relative top-30">
+      <div className="<div className= p-5 relative top-30 flex gap-10">
 
         <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-lg w-96">
 
@@ -93,7 +93,53 @@ const savepassword=()=>{
           </button>
 
         </div>
+        <div className="passwords w-250" >
+          <h2 className='font-bold text-2xl'>YOUR PASSWORDS</h2>
+         
 
+<div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+  {passwordsArray.length===0 && <div className='font-mono'>NO PASSWORDS TO SHOW </div>}
+  {passwordsArray.length!=0  &&
+    <table className="w-full text-sm text-left rtl:text-right text-body ">
+        <thead class="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
+            <tr>
+                <th scope="col" className="px-6 py-3 font-medium">
+                   URL
+                </th>
+                
+                <th scope="col" className="px-6 py-3 font-medium">
+                    Username
+                </th>
+                <th scope="col" className="px-6 py-3 font-medium">
+                    Passwords
+                </th>
+               
+            </tr>
+        </thead>
+        <tbody>
+          {passwordsArray.map((item,index)=>{
+            
+            return <tr class="bg-neutral-primary border-b border-default" key={index}>
+                <td scope="row" className="px-6 py-4 font-medium text-heading whitespace-nowrap" >
+                  <a href={item.site} target='_blank'>  {item.site}</a>
+                  
+                </td>
+                <td className="px-6 py-4">
+                    {item.username}
+                </td>
+                <td className="px-6 py-4">
+                    {item.password}
+                </td>
+               
+            </tr>
+
+  }  )}
+           
+        </tbody>
+    </table>}
+</div>
+
+        </div>
       </div>
     </div>
   )
