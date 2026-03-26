@@ -154,6 +154,9 @@ transition={Bounce}
                 <th scope="col" className="px-6 py-3 font-medium w-1/4 ">
                     Passwords  
                 </th>
+                <th scope="col" className="px-6 py-3 font-medium w-1/4 ">
+                    Actions 
+                </th>
                
             </tr>
         </thead>
@@ -166,12 +169,22 @@ transition={Bounce}
                   
                 </td>
                 <td className="px-6 py-4  border-b ">
-                    {item.username}  <img className='h-4.5 ' onClick={()=>CopyText(item.username)}         src="icons/copy.png" alt="copy" />
+                  <div className="flex">
+                    <span>{item.username}</span>  <img className='h-4.5 ' onClick={()=>CopyText(item.username)}         src="icons/copy.png" alt="copy" />
+                    </div>
                 </td>
-                <td className="  px-6 py-4 flex">
-                    {item.password}  <img className='h-4.5' onClick={()=>CopyText(item.password)}     src="icons/copy.png" alt="copy" />
+                <td className="  px-6 py-4 ">
+                  <div className="flex ">
+                    <span>{item.password}</span>  <img className='h-4.5' onClick={()=>CopyText(item.password)}     src="icons/copy.png" alt="copy" />
+                    </div>
                 </td>
-               
+                <td className=" justify-center px-6 py-4 flex">
+                  <div className="flex gap-2 ">
+                  <span><img        src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit" srcset="" /> </span>
+                  
+                  <span><img src="https://i.pinimg.com/564x/81/e3/17/81e31793e4266d231831a9c2548e7e33.jpg" alt="" /></span>
+                  </div>
+                </td>
             </tr>
 
   }  )}
