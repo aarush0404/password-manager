@@ -26,14 +26,22 @@ const showpassword=()=>{
  setshow(!show);
 }
 const savepassword=()=>{
-  
+   if (!form.site || !form.username || !form.password) {
+    alert("Fill all fields bro")
+    return
+  }
   setpasswordsArray([...passwordsArray,form])
   localStorage.setItem("passwords",JSON.stringify([...passwordsArray,form]))
   console.log([...passwordsArray,form])
 
+  setForm({
+    site: "",
+    username: "",
+    password: ""
+  })
 }
   return (
-    <div className="min-h-screen w-full relative">
+    <div className="min-h-screen w-full relative flex justify-center">
 
       {/* Background */}
       <div
@@ -44,9 +52,9 @@ const savepassword=()=>{
       />
 
       {/* Content */}
-      <div className="<div className= p-5 relative top-30 flex gap-10">
+      <div className="w-full max-w-7xl p-3 sm:p-5 relative top-10 flex flex-col lg:flex-row gap-10 items-start">
 
-        <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-lg w-96">
+        <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-lg w-full max-w-sm lg:w-96 shrink-0">
 
           <h2 className="text-2xl font-bold mb-4 text-center">
             Add Password
@@ -93,25 +101,25 @@ const savepassword=()=>{
           </button>
 
         </div>
-        <div className="passwords w-250" >
+        <div className="passwords flex-1 w-full min-w-0" >
           <h2 className='font-bold text-2xl'>YOUR PASSWORDS</h2>
          
 
-<div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+<div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
   {passwordsArray.length===0 && <div className='font-mono'>NO PASSWORDS TO SHOW </div>}
   {passwordsArray.length!=0  &&
     <table className="w-full text-sm text-left rtl:text-right text-body ">
         <thead class="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
             <tr>
-                <th scope="col" className="px-6 py-3 font-medium">
+                <th scope="col" className="px-6 py-3 font-medium w-1/2">
                    URL
                 </th>
                 
-                <th scope="col" className="px-6 py-3 font-medium">
+                <th scope="col" className="px-6 py-3 font-medium w-1/4">
                     Username
                 </th>
-                <th scope="col" className="px-6 py-3 font-medium">
-                    Passwords
+                <th scope="col" className="px-6 py-3 font-medium w-1/4 ">
+                    Passwords  
                 </th>
                
             </tr>
@@ -119,16 +127,16 @@ const savepassword=()=>{
         <tbody>
           {passwordsArray.map((item,index)=>{
             
-            return <tr class="bg-neutral-primary border-b border-default" key={index}>
-                <td scope="row" className="px-6 py-4 font-medium text-heading whitespace-nowrap" >
-                  <a href={item.site} target='_blank'>  {item.site}</a>
+            return <tr className="bg-neutral-primary border-b border-default " key={index}>
+                <td scope="row" className="  px-4 py-2 break-all  " >
+                  <a    className='flex' href={item.site} target='_blank'>  {item.site}   <img className='h-4.5' src="icons/copy.png" alt="copy" /></a>
                   
                 </td>
-                <td className="px-6 py-4">
-                    {item.username}
+                <td className="px-6 py-4   ">
+                    {item.username}  <img className='h-4.5 ' src="icons/copy.png" alt="copy" />
                 </td>
-                <td className="px-6 py-4">
-                    {item.password}
+                <td className="px-6 py-4 flex">
+                    {item.password}  <img className='h-4.5' src="icons/copy.png" alt="copy" />
                 </td>
                
             </tr>
