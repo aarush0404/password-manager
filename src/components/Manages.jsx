@@ -1,8 +1,26 @@
 import React, { useState,useRef,useEffect } from 'react'
+import { ToastContainer, toast,Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Manages = () => {
+  const [clicked, setClicked] = useState(false)
 const ref = useRef()
 const [passwordsArray, setpasswordsArray] = useState([])
+const CopyText=(text)=>{
+  toast('🦄 copied to clipboard!', {
+position: "top-right",
+autoClose: 500,
+hideProgressBar: false,
+closeOnClick: false,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "light",
+transition: Bounce,
+});
+
+  navigator.clipboard.writeText(text)
+}
 useEffect(() => {
 let passwords=localStorage.getItem("passwords")
   
@@ -40,7 +58,22 @@ const savepassword=()=>{
     password: ""
   })
 }
-  return (
+  return (<>
+  <ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+style={{ zIndex: 9999 }}
+transition={Bounce}
+/>
+    
     <div className="min-h-screen w-full relative flex justify-center">
 
       {/* Background */}
@@ -108,14 +141,14 @@ const savepassword=()=>{
 <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
   {passwordsArray.length===0 && <div className='font-mono'>NO PASSWORDS TO SHOW </div>}
   {passwordsArray.length!=0  &&
-    <table className="w-full text-sm text-left rtl:text-right text-body ">
+    <table className="   w-full text-sm text-left rtl:text-right text-body ">
         <thead class="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
             <tr>
-                <th scope="col" className="px-6 py-3 font-medium w-1/2">
+                <th scope="col" className=" border-b px-6 py-3 font-medium w-1/2">
                    URL
                 </th>
                 
-                <th scope="col" className="px-6 py-3 font-medium w-1/4">
+                <th scope="col" className="  px-6 py-3 font-medium w-1/4">
                     Username
                 </th>
                 <th scope="col" className="px-6 py-3 font-medium w-1/4 ">
@@ -127,16 +160,16 @@ const savepassword=()=>{
         <tbody>
           {passwordsArray.map((item,index)=>{
             
-            return <tr className="bg-neutral-primary border-b border-default " key={index}>
+            return <tr className="   bg-neutral-primary border-b border-default " key={index}>
                 <td scope="row" className="  px-4 py-2 break-all  " >
-                  <a    className='flex' href={item.site} target='_blank'>  {item.site}   <img className='h-4.5' src="icons/copy.png" alt="copy" /></a>
+                  <a    className='flex' href={item.site} target='_blank'>  {item.site}   <img className={`h-4.5 cursor-pointer ${clicked?"opacity-50":""}`} onClick={(e)=>{e.preventDefault();e.stopPropagation();CopyText(item.site);}}     src="icons/copy.png" alt="copy" /></a>
                   
                 </td>
-                <td className="px-6 py-4   ">
-                    {item.username}  <img className='h-4.5 ' src="icons/copy.png" alt="copy" />
+                <td className="px-6 py-4  border-b ">
+                    {item.username}  <img className='h-4.5 ' onClick={()=>CopyText(item.username)}         src="icons/copy.png" alt="copy" />
                 </td>
-                <td className="px-6 py-4 flex">
-                    {item.password}  <img className='h-4.5' src="icons/copy.png" alt="copy" />
+                <td className="  px-6 py-4 flex">
+                    {item.password}  <img className='h-4.5' onClick={()=>CopyText(item.password)}     src="icons/copy.png" alt="copy" />
                 </td>
                
             </tr>
@@ -150,7 +183,10 @@ const savepassword=()=>{
         </div>
       </div>
     </div>
+  
+  </>
   )
 }
+
 
 export default Manages;
