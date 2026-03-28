@@ -1,6 +1,7 @@
 import React, { useState,useRef,useEffect } from 'react'
 import { ToastContainer, toast,Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { v4 as uuidv4 } from 'uuid';
 
 const Manages = () => {
   const [clicked, setClicked] = useState(false)
@@ -48,16 +49,65 @@ const savepassword=()=>{
     alert("Fill all fields bro")
     return
   }
-  setpasswordsArray([...passwordsArray,form])
-  localStorage.setItem("passwords",JSON.stringify([...passwordsArray,form]))
-  console.log([...passwordsArray,form])
+  const newentry={
+    ...form,
+    id:uuidv4()
+  }
+  const newArr=[...passwordsArray,newentry]
+  setpasswordsArray(newArr)
+  localStorage.setItem("passwords",JSON.stringify(newArr))
+  console.log(newArr)
 
   setForm({
     site: "",
     username: "",
     password: ""
   })
+  toast('🦄 Password saved successfully!', {
+position: "top-right",
+autoClose: 2000,
+hideProgressBar: false,
+closeOnClick: false,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "dark",
+transition: Bounce,
+});
 }
+const deletepassword=(id)=>{
+  let c=confirm("Do you really want to delete this password");
+  if(c){
+ console.log("deleting the passoword with id",id)
+ const newArr=passwordsArray.filter(item=>item.id!==id)
+ setpasswordsArray(newArr);
+ 
+ localStorage.setItem("passwords",JSON.stringify(newArr))
+  toast('🦄 Password deleted!', {
+position: "top-right",
+autoClose: 2000,
+hideProgressBar: false,
+closeOnClick: false,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "dark",
+transition: Bounce,
+});
+}
+ 
+}
+const editpassword=(item)=>{
+  setForm({
+    site:item.site,
+    username:item.username,
+    password:item.password
+  });
+  const newarr=passwordsArray.filter(p=>p.id!==item.id);
+setpasswordsArray(newarr);
+localStorage.setItem("passwords",JSON.stringify(newarr));
+  
+};
   return (<>
   <ToastContainer
 position="top-right"
@@ -179,10 +229,10 @@ transition={Bounce}
                     </div>
                 </td>
                 <td className=" justify-center px-6 py-4 flex">
-                  <div className="flex gap-2 ">
-                  <span><img        src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit" srcset="" /> </span>
+                  <div className="flex gap-2 justify-center ">
+                  <span><img  className='w-5 h-5 cursor-pointer'  onClick={()=>{editpassword(item)}}   src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit" srcset="" /> </span>
                   
-                  <span><img src="https://i.pinimg.com/564x/81/e3/17/81e31793e4266d231831a9c2548e7e33.jpg" alt="" /></span>
+                  <span><img className='w-7 h-5 cursor-pointer'  onClick={()=>{deletepassword(item.id)}}     src="https://toppng.com/uploads/preview/edit-delete-icon-delete-icon-11553444925vxge0bju5o.png" alt="Delete" /></span>
                   </div>
                 </td>
             </tr>
