@@ -214,25 +214,64 @@ transition={Bounce}
           {passwordsArray.map((item,index)=>{
             
             return <tr className="   bg-neutral-primary border-b border-default " key={index}>
-                <td scope="row" className="  px-4 py-2 break-all  " >
+                {/* <td scope="row" className="  px-4 py-2 break-all  " >
                   <a    className='flex' href={item.site} target='_blank'>  {item.site}   <img className={`h-4.5 cursor-pointer ${clicked?"opacity-50":""}`} onClick={(e)=>{e.preventDefault();e.stopPropagation();CopyText(item.site);}}     src="icons/copy.png" alt="copy" /></a>
                   
-                </td>
+                </td> */}
+                <td className="px-6 py-4 border-b">
+  <div className="flex items-center gap-2">
+    <span>{item.site}</span>
+
+    <svg
+      onClick={() => CopyText(item.username)}
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-4 w-4 cursor-pointer text-gray-500 hover:text-blue-500 transition"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={5}
+        d="M8 16h8M8 12h8m-6-8h6a2 2 0 012 2v12a2 2 0 01-2 2h-6l-4-4V6a2 2 0 012-2z" />
+    </svg>
+  </div>
+</td>
                 <td className="px-6 py-4  border-b ">
                   <div className="flex">
-                    <span>{item.username}</span>  <img className='h-4.5 ' onClick={()=>CopyText(item.username)}         src="icons/copy.png" alt="copy" />
+                    <span>{item.username}</span>  
+                      <svg
+      onClick={() => CopyText(item.username)}
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-4 w-4 cursor-pointer text-gray-500 hover:text-blue-500 transition"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={5}
+        d="M8 16h8M8 12h8m-6-8h6a2 2 0 012 2v12a2 2 0 01-2 2h-6l-4-4V6a2 2 0 012-2z" />
+    </svg>
                     </div>
                 </td>
                 <td className="  px-6 py-4 ">
                   <div className="flex ">
-                    <span>{item.password}</span>  <img className='h-4.5' onClick={()=>CopyText(item.password)}     src="icons/copy.png" alt="copy" />
+                    <span>{item.password}</span> 
+                      <svg
+      onClick={() => CopyText(item.password)}
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-4 w-4 cursor-pointer text-gray-500 hover:text-blue-500 transition"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={5}
+        d="M8 16h8M8 12h8m-6-8h6a2 2 0 012 2v12a2 2 0 01-2 2h-6l-4-4V6a2 2 0 012-2z" />
+    </svg>
                     </div>
                 </td>
                 <td className=" justify-center px-6 py-4 flex">
                   <div className="flex gap-2 justify-center ">
                   <span><img  className='w-5 h-5 cursor-pointer'  onClick={()=>{editpassword(item)}}   src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit" srcset="" /> </span>
                   
-                  <span><img className='w-7 h-5 cursor-pointer'  onClick={()=>{deletepassword(item.id)}}     src="https://toppng.com/uploads/preview/edit-delete-icon-delete-icon-11553444925vxge0bju5o.png" alt="Delete" /></span>
+                  <span><img className='w-7 h-5 cursor-pointer'  onClick={()=>{deletepassword(item.id)}}     src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" alt="Delete" /></span>
                   </div>
                 </td>
             </tr>
