@@ -19,20 +19,32 @@ mongoose.connect(process.env.MONGO_URI)
 // route
 
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    return res.status(401).json({ message: "No token provided" });
-  }
-
-  const token = authHeader.split(" ")[1];
-
   try {
+    const authHeader = req.headers.authorization;
+
+    // 1. Check if header exists
+    if (!authHeader) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    // 2. Check proper format "Bearer token"
+    if (!authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Invalid token format" });
+    }
+
+    // 3. Extract token
+    const token = authHeader.split(" ")[1];
+
+    // 4. Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // 5. Attach user to request
     req.user = decoded;
+
     next();
+
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
@@ -70,7 +82,7 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
