@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import User from "./models/User.js";
 import cors from "cors";
-
+import Password from "./models/Password.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -118,6 +118,72 @@ app.get("/profile", verifyToken, (req, res) => {
     message: "You are logged in",
     user: req.user
   });
+});
+
+//password
+app.post("/passwords", verifyToken, async (req, res) => {
+  try {
+    const { site, username, password } = req.body;
+
+    const newPassword = new Password({
+      site,
+      username,
+      password,
+      userId: req.user.userId
+    });
+
+    await newPassword.save();
+
+    res.status(201).json({ message: "Password saved" });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//get pass
+app.get("/passwords", verifyToken, async (req, res) => {
+  try {
+    const passwords = await Password.find({
+      userId: req.user.userId
+    });
+
+    res.json(passwords);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+//delete password
+app.delete("/passwords/:id", verifyToken, async (req, res) => {
+  try {
+    await Password.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.userId
+    });
+
+    res.json({ message: "Deleted successfully" });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+//updata pass
+app.put("/passwords/:id", verifyToken, async (req, res) => {
+  try {
+    const { site, username, password } = req.body;
+
+    const updated = await Password.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.userId },
+      { site, username, password },
+      { new: true }
+    );
+
+    res.json(updated);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // start server
