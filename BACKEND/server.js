@@ -123,15 +123,17 @@ app.get("/profile", verifyToken, (req, res) => {
 //password
 app.post("/passwords", verifyToken, async (req, res) => {
   try {
-    const { site, username, password } = req.body;
+    
+const { site, username, password: plainPassword } = req.body;
 
-    const newPassword = new Password({
-      site,
-      username,
-      password,
-      userId: req.user.userId
-    });
+const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
+const newPassword = new Password({
+  site,
+  username,
+  password: hashedPassword,
+  userId: req.user.userId
+});
     await newPassword.save();
 
     res.status(201).json({ message: "Password saved" });
@@ -171,15 +173,42 @@ app.delete("/passwords/:id", verifyToken, async (req, res) => {
 //updata pass
 app.put("/passwords/:id", verifyToken, async (req, res) => {
   try {
-    const { site, username, password } = req.body;
+    const { site, username, password: plainPassword } = req.body;
 
-    const updated = await Password.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.userId },
-      { site, username, password },
-      { new: true }
+    // ✅ Validation
+    if (!site || !username || !plainPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // ✅ Hash password before saving
+    const hashedPassword = await bcrypt.hash(plainPassword, 10);
+
+    // ✅ Update only if it belongs to logged-in user
+    const updatedPassword = await Password.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        userId: req.user.userId
+      },
+      {
+        site,
+        username,
+        password: hashedPassword
+      },
+      {
+        new: true
+      }
     );
 
-    res.json(updated);
+    // ✅ If not found
+    if (!updatedPassword) {
+      return res.status(404).json({ message: "Password not found" });
+    }
+
+    // ✅ Success response
+    res.json({
+      message: "Password updated successfully",
+      data: updatedPassword
+    });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
