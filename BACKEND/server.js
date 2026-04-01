@@ -123,26 +123,24 @@ app.get("/profile", verifyToken, (req, res) => {
 //password
 app.post("/passwords", verifyToken, async (req, res) => {
   try {
-    
-const { site, username, password: plainPassword } = req.body;
+    const { site, username, password } = req.body;
 
-const hashedPassword = await bcrypt.hash(plainPassword, 10);
+    const newPassword = new Password({
+      site,
+      username,
+      password, // ✅ plain text (for now)
+      userId: req.user.userId
+    });
 
-const newPassword = new Password({
-  site,
-  username,
-  password: hashedPassword,
-  userId: req.user.userId
-});
     await newPassword.save();
 
-    res.status(201).json({ message: "Password saved" });
+    // ✅ send full object back
+    res.status(201).json(newPassword);
 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 //get pass
 app.get("/passwords", verifyToken, async (req, res) => {
   try {
@@ -173,17 +171,12 @@ app.delete("/passwords/:id", verifyToken, async (req, res) => {
 //updata pass
 app.put("/passwords/:id", verifyToken, async (req, res) => {
   try {
-    const { site, username, password: plainPassword } = req.body;
+    const { site, username, password } = req.body;
 
-    // ✅ Validation
-    if (!site || !username || !plainPassword) {
+    if (!site || !username || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // ✅ Hash password before saving
-    const hashedPassword = await bcrypt.hash(plainPassword, 10);
-
-    // ✅ Update only if it belongs to logged-in user
     const updatedPassword = await Password.findOneAndUpdate(
       {
         _id: req.params.id,
@@ -192,29 +185,21 @@ app.put("/passwords/:id", verifyToken, async (req, res) => {
       {
         site,
         username,
-        password: hashedPassword
+        password // ✅ plain text
       },
-      {
-        new: true
-      }
+      { new: true }
     );
 
-    // ✅ If not found
     if (!updatedPassword) {
       return res.status(404).json({ message: "Password not found" });
     }
 
-    // ✅ Success response
-    res.json({
-      message: "Password updated successfully",
-      data: updatedPassword
-    });
+    res.json(updatedPassword);
 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 // start server
 app.listen(5000, () => {
   console.log("Server running on port 5000");

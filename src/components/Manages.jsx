@@ -1,9 +1,12 @@
 import React, { useState,useRef,useEffect } from 'react'
 import { ToastContainer, toast,Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { v4 as uuidv4 } from 'uuid';
+
+
+
 
 const Manages = () => {
+  const [editId, setEditId] = useState(null);
   const [clicked, setClicked] = useState(false)
 const ref = useRef()
 const [passwordsArray, setpasswordsArray] = useState([])
@@ -23,13 +26,19 @@ transition: Bounce,
   navigator.clipboard.writeText(text)
 }
 useEffect(() => {
-let passwords=localStorage.getItem("passwords")
-  
-  if(passwords){
-    setpasswordsArray(JSON.parse(passwords))
-  
-  }
-}, [])
+  const fetchPasswords = async () => {
+    const res = await fetch("http://localhost:5000/passwords", {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token")
+      }
+    });
+
+    const data = await res.json();
+    setpasswordsArray(data);
+  };
+
+  fetchPasswords();
+}, []);
 
   const [form, setForm] = useState({
     site: "",
@@ -44,69 +53,117 @@ let passwords=localStorage.getItem("passwords")
 const showpassword=()=>{
  setshow(!show);
 }
-const savepassword=()=>{
-   if (!form.site || !form.username || !form.password) {
-    alert("Fill all fields bro")
-    return
+const savepassword = async () => {
+  if (!form.site || !form.username || !form.password) {
+    alert("Fill all fields bro");
+    return;
   }
-  const newentry={
-    ...form,
-    id:uuidv4()
-  }
-  const newArr=[...passwordsArray,newentry]
-  setpasswordsArray(newArr)
-  localStorage.setItem("passwords",JSON.stringify(newArr))
-  console.log(newArr)
 
+  try {
+    // 🔥 UPDATE MODE
+    if (editId) {
+      const res = await fetch(`http://localhost:5000/passwords/${editId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify(form)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setpasswordsArray(prev =>
+          prev.map(item => item._id === editId ? data : item)
+        );
+
+        setEditId(null);
+
+        toast('🦄 Password updated successfully!', {
+          position: "top-right",
+          autoClose: 2000,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+
+    } 
+    // 🔥 CREATE MODE
+    else {
+      const res = await fetch("http://localhost:5000/passwords", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify(form)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setpasswordsArray(prev => [...prev, data]);
+
+        toast('🦄 Password saved successfully!', {
+          position: "top-right",
+          autoClose: 2000,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+    }
+
+    // ✅ clear form (common)
+    setForm({
+      site: "",
+      username: "",
+      password: ""
+    });
+
+  } catch (error) {
+    console.log(error);
+    alert("Something went wrong");
+  }
+};
+const deletepassword = async (id) => {
+  let c = confirm("Do you really want to delete this password");
+
+  if (c) {
+    try {
+      const res = await fetch(`http://localhost:5000/passwords/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token")
+        }
+      });
+
+      if (res.ok) {
+        // ✅ Update UI instantly (no reload)
+        setpasswordsArray(prev => prev.filter(item => item._id !== id));
+
+        toast('🦄 Password deleted!', {
+          position: "top-right",
+          autoClose: 2000,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+
+    } catch (error) {
+      console.log(error);
+      alert("Error deleting password");
+    }
+  }
+};
+const editpassword = (item) => {
   setForm({
-    site: "",
-    username: "",
-    password: ""
-  })
-  toast('🦄 Password saved successfully!', {
-position: "top-right",
-autoClose: 2000,
-hideProgressBar: false,
-closeOnClick: false,
-pauseOnHover: true,
-draggable: true,
-progress: undefined,
-theme: "dark",
-transition: Bounce,
-});
-}
-const deletepassword=(id)=>{
-  let c=confirm("Do you really want to delete this password");
-  if(c){
- console.log("deleting the passoword with id",id)
- const newArr=passwordsArray.filter(item=>item.id!==id)
- setpasswordsArray(newArr);
- 
- localStorage.setItem("passwords",JSON.stringify(newArr))
-  toast('🦄 Password deleted!', {
-position: "top-right",
-autoClose: 2000,
-hideProgressBar: false,
-closeOnClick: false,
-pauseOnHover: true,
-draggable: true,
-progress: undefined,
-theme: "dark",
-transition: Bounce,
-});
-}
- 
-}
-const editpassword=(item)=>{
-  setForm({
-    site:item.site,
-    username:item.username,
-    password:item.password
+    site: item.site,
+    username: item.username,
+    password: item.password
   });
-  const newarr=passwordsArray.filter(p=>p.id!==item.id);
-setpasswordsArray(newarr);
-localStorage.setItem("passwords",JSON.stringify(newarr));
-  
+
+  setEditId(item._id); // store id for update
 };
   return (<>
   <ToastContainer
@@ -271,7 +328,7 @@ transition={Bounce}
                   <div className="flex gap-2 justify-center ">
                   <span><img  className='w-5 h-5 cursor-pointer'  onClick={()=>{editpassword(item)}}   src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit" srcset="" /> </span>
                   
-                  <span><img className='w-7 h-5 cursor-pointer'  onClick={()=>{deletepassword(item.id)}}     src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" alt="Delete" /></span>
+                  <span><img className='w-7 h-5 cursor-pointer'  onClick={()=>{deletepassword(item._id)}}     src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" alt="Delete" /></span>
                   </div>
                 </td>
             </tr>
