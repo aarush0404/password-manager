@@ -1,18 +1,15 @@
-import React from "react";
-import Navbar from "./components/Navbar"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Auth from "./components/Login";   // your login/register page
 import Manages from "./components/Manages";
-import Footer from "./components/Footer";
-import Login from "./components/login";
+
 function App() {
   return (
-    <>
-    <Login/>
-   <Navbar/>
-   <Manages/>
-   <Footer/>
- </>
-
-   
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Auth />} />
+        <Route path="/dashboard" element={<Manages />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
