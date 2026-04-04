@@ -1,11 +1,13 @@
-import React from 'react'
+import React from "react";
 
 const Footer = () => {
   return (
-    <div className=' bg-black text-white w-full relative top-20 '>
-     &copy; All Rights Reserved
-    </div>
-  )
-}
+    <footer className="w-full bg-[#0E103D] text-white text-center py-3 mt-10">
+      <p className="text-sm">
+        © {new Date().getFullYear()} Pass Saver • Made with ❤️
+      </p>
+    </footer>
+  );
+};
 
-export default Footer
+export default Footer;
